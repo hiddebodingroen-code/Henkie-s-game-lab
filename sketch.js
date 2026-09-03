@@ -7,6 +7,7 @@ function setup() {
 function draw() {
     background(0);
     circle(200, 200, 100);
+    fill(255);
     text(cookie, 300, 200);
 }
 function mousePressed() {
