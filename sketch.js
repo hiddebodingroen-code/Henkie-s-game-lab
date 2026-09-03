@@ -5,7 +5,8 @@ function setup() {
 }
 
 function draw() {
-    background(0);
+    background(128);
+     fill('brown'); 
     circle(200, 200, 100);
     fill(255);
     text(cookie, 300, 200);
