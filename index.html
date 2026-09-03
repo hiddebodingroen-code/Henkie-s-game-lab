@@ -1,13 +1,14 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Henkie's Game Lab</title>
-</head>
+let cookie = 0
 
-<body style="background-color: blue;">
+function setup() {
+    createCanvas(windowWidth, windowHeight);
+}
 
-    <h1>Henkie's Game Lab</h1>
-    <p>work in progress</p>
-
-</body>
-</html>
+function draw() {
+    background(0);
+    circle(200, 200, 100);
+    text(cookie, 300, 200);
+}
+function mousePressed() {
+    if (dist(mouseX, mouseY, 200, 200) < 50) {cookie = cookie+1}
+        }
