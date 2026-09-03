@@ -1,6 +1,7 @@
 let cookie = 0
 let oma = 0
 let timer = 0
+let klik = 1
 
 function setup() {
     createCanvas(windowWidth, windowHeight);
@@ -21,16 +22,33 @@ function draw() {
     textSize(50);
     fill(255);
     text(cookie, 200, 300);
+    
+    textSize(30);
+    fill(255);
+    text(oma, 400, 300);
+
+    textSize(30);
+    fill(255);
+    text(klik, 400, 500);
+    
+    fill(255);
+    square(400, 300, 100);
 
     fill(255);
-    square(400, 200, 100);
+    square(400, 500, 100);
 }
 
 function mousePressed() {
     if (dist(mouseX, mouseY, 200, 200) < 50) {
-        cookie = cookie + 1;
+        cookie = cookie + klik;
     }
 
+    if (mouseX >= 400 && mouseX <= 500 && mouseY >= 400 && mouseY <= 500) {
+        if (cookie >= 500) {
+            klik = klik + 1;
+            cookie = cookie - 500;
+
+        }}
     if (mouseX >= 400 && mouseX <= 500 && mouseY >= 200 && mouseY <= 300) {
         if (cookie >= 100) {
             oma = oma + 1;
