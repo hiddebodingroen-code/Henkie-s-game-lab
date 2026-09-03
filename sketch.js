@@ -43,13 +43,14 @@ function mousePressed() {
         cookie = cookie + klik;
     }
 
-    if (mouseX >= 400 && mouseX <= 500 && mouseY >= 400 && mouseY <= 500) {
+    if (mouseX >= 400 && mouseX <= 500 && mouseY >= 500 && mouseY <= 600) {
         if (cookie >= 500) {
             klik = klik + 1;
             cookie = cookie - 500;
+        }
+    }
 
-        }}
-    if (mouseX >= 400 && mouseX <= 500 && mouseY >= 200 && mouseY <= 300) {
+    if (mouseX >= 400 && mouseX <= 500 && mouseY >= 300 && mouseY <= 400) {
         if (cookie >= 100) {
             oma = oma + 1;
             cookie = cookie - 100;
