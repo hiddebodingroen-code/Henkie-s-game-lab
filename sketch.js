@@ -22,6 +22,7 @@ function draw() {
     fill(255);
     text(cookie, 200, 300);
 
+    fill(255);
     square(400, 200, 100);
 }
 
