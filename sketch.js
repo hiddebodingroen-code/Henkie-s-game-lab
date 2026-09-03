@@ -5,7 +5,7 @@ function setup() {
 }
 
 function draw() {
-background(255, 0, 0);
+background(128);
      fill('brown'); 
     circle(200, 200, 100);
     fill(255);
