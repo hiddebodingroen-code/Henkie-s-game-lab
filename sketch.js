@@ -1,34 +1,63 @@
 let game = "menu";
-
-// Algemene variabelen
 let score = 0;
 
-// Snake
-let snakeX = 200;
-let snakeY = 200;
-let snakeDX = 20;
+const gridSize = 25;
+
+// ========================
+// SNAKE
+// ========================
+
+let snakeX;
+let snakeY;
+let snakeDX = gridSize;
 let snakeDY = 0;
-let foodX = 300;
-let foodY = 200;
 
-// Dodge
-let playerX = 200;
-let enemyX = 100;
+let foodX;
+let foodY;
+
+// ========================
+// DODGE
+// ========================
+
+let playerX;
+let enemyX;
 let enemyY = 0;
-let enemySpeed = 5;
+let enemySpeed = 6;
 
-// Catch
-let basketX = 200;
-let ballX = 200;
+// ========================
+// CATCH
+// ========================
+
+let basketX;
+let ballX;
 let ballY = 0;
 
+
+// ========================
+// SETUP
+// ========================
+
 function setup() {
-  createCanvas(500, 400);
+  createCanvas(windowWidth, windowHeight);
+
   textAlign(CENTER, CENTER);
+
+  snakeX = floor(width / 2 / gridSize) * gridSize;
+  snakeY = floor(height / 2 / gridSize) * gridSize;
+
+  makeFood();
+
+  enemyX = random(50, width - 50);
+  ballX = random(30, width - 30);
 }
 
+
+// ========================
+// DRAW
+// ========================
+
 function draw() {
-  background(25);
+  background(20);
 
   if (game === "menu") {
     drawMenu();
@@ -48,272 +77,533 @@ function draw() {
 }
 
 
-// =======================
-// MENU
-// =======================
+// ========================
+// FULLSCREEN MENU
+// ========================
 
 function drawMenu() {
-  fill(255);
-  textSize(32);
-  text("Welke game wil je?", width / 2, 60);
+  background(15, 20, 35);
 
-  drawButton(100, 130, 300, 60, "🐍 Snake");
-  drawButton(100, 210, 300, 60, "🚗 Dodge");
-  drawButton(100, 290, 300, 60, "🍎 Catch");
+  fill(255);
+  textSize(50);
+  text("🎮 Welke game wil je?", width / 2, height * 0.18);
+
+  let buttonWidth = min(400, width * 0.7);
+  let buttonHeight = 70;
+
+  let x = width / 2 - buttonWidth / 2;
+
+  drawButton(
+    x,
+    height * 0.35,
+    buttonWidth,
+    buttonHeight,
+    "🐍 SNAKE"
+  );
+
+  drawButton(
+    x,
+    height * 0.50,
+    buttonWidth,
+    buttonHeight,
+    "🚗 DODGE"
+  );
+
+  drawButton(
+    x,
+    height * 0.65,
+    buttonWidth,
+    buttonHeight,
+    "🍎 CATCH"
+  );
+
+  fill(150);
+  textSize(16);
+  text(
+    "Kies een game om te beginnen",
+    width / 2,
+    height * 0.82
+  );
 }
 
+
 function drawButton(x, y, w, h, tekst) {
-  if (
+
+  let hover =
     mouseX > x &&
     mouseX < x + w &&
     mouseY > y &&
-    mouseY < y + h
-  ) {
-    fill(80, 150, 255);
+    mouseY < y + h;
+
+  if (hover) {
+    fill(70, 140, 255);
   } else {
-    fill(50);
+    fill(40, 50, 75);
   }
 
+  noStroke();
   rect(x, y, w, h, 15);
 
   fill(255);
-  textSize(24);
+  textSize(25);
   text(tekst, x + w / 2, y + h / 2);
 }
 
 
-// =======================
-// SNAKE
-// =======================
+// ========================
+// 🐍 SNAKE
+// ========================
 
 function snakeGame() {
-  background(30, 100, 50);
 
+  background(15, 80, 45);
+
+  // Titel
   fill(255);
-  textSize(18);
-  text("Snake | Score: " + score, width / 2, 20);
+  textSize(22);
+  text(
+    "🐍 Snake   |   Score: " + score,
+    width / 2,
+    30
+  );
 
-  // snake
-  fill(0, 255, 100);
-  rect(snakeX, snakeY, 20, 20);
+  // Besturing
+  textSize(14);
+  text(
+    "WASD / pijltjestoetsen • M = menu",
+    width / 2,
+    58
+  );
 
-  // eten
-  fill(255, 50, 50);
-  ellipse(foodX + 10, foodY + 10, 20);
 
-  if (frameCount % 8 === 0) {
+  // ETEN
+  fill(255, 70, 70);
+  ellipse(
+    foodX + gridSize / 2,
+    foodY + gridSize / 2,
+    gridSize * 0.8
+  );
+
+
+  // SNAKE
+  fill(70, 255, 120);
+
+  rect(
+    snakeX,
+    snakeY,
+    gridSize,
+    gridSize,
+    5
+  );
+
+
+  // BEWEGEN
+  if (frameCount % 6 === 0) {
+
     snakeX += snakeDX;
     snakeY += snakeDY;
 
-    // scherm wrap
-    if (snakeX >= width) snakeX = 0;
-    if (snakeX < 0) snakeX = width - 20;
-    if (snakeY >= height) snakeY = 0;
-    if (snakeY < 40) snakeY = height - 20;
 
-    // eten geraakt
-    if (dist(snakeX, snakeY, foodX, foodY) < 20) {
+    // Door de randen heen
+    if (snakeX >= width) {
+      snakeX = 0;
+    }
+
+    if (snakeX < 0) {
+      snakeX =
+        floor(width / gridSize) *
+        gridSize;
+    }
+
+    if (snakeY >= height) {
+      snakeY = 75;
+    }
+
+    if (snakeY < 75) {
+      snakeY =
+        floor(height / gridSize) *
+        gridSize;
+    }
+
+
+    // ETEN GEVONDEN
+    if (
+      abs(snakeX - foodX) < gridSize &&
+      abs(snakeY - foodY) < gridSize
+    ) {
+
       score++;
 
-      foodX = floor(random(0, width / 20)) * 20;
-      foodY = floor(random(2, height / 20)) * 20;
+      makeFood();
     }
   }
-
-  menuTekst();
 }
 
 
-// =======================
-// DODGE
-// =======================
+function makeFood() {
+
+  foodX =
+    floor(
+      random(0, width / gridSize)
+    ) * gridSize;
+
+  foodY =
+    floor(
+      random(4, height / gridSize)
+    ) * gridSize;
+}
+
+
+// ========================
+// 🚗 DODGE
+// ========================
 
 function dodgeGame() {
-  background(40, 40, 80);
+
+  background(35, 35, 80);
 
   fill(255);
-  textSize(18);
-  text("Dodge | Score: " + score, width / 2, 20);
+  textSize(22);
 
-  // speler
+  text(
+    "🚗 Dodge | Score: " + score,
+    width / 2,
+    30
+  );
+
+
   playerX = mouseX;
 
-  fill(0, 200, 255);
-  rect(playerX - 25, height - 50, 50, 25, 5);
 
-  // vijand
+  // SPELER
+  fill(50, 200, 255);
+
+  rect(
+    playerX - 30,
+    height - 70,
+    60,
+    30,
+    7
+  );
+
+
+  // VIJAND
   fill(255, 70, 70);
-  rect(enemyX, enemyY, 40, 40);
+
+  rect(
+    enemyX,
+    enemyY,
+    50,
+    50,
+    7
+  );
+
 
   enemyY += enemySpeed;
 
+
+  // Vijand voorbij
   if (enemyY > height) {
-    enemyY = -40;
-    enemyX = random(0, width - 40);
+
+    enemyY = -50;
+
+    enemyX =
+      random(0, width - 50);
 
     score++;
 
-    enemySpeed += 0.2;
+    enemySpeed += 0.3;
   }
 
-  // botsing
+
+  // BOTSING
   if (
-    enemyY + 40 > height - 50 &&
-    enemyX < playerX + 25 &&
-    enemyX + 40 > playerX - 25
+    enemyY + 50 > height - 70 &&
+    enemyX < playerX + 30 &&
+    enemyX + 50 > playerX - 30
   ) {
+
     score = 0;
-    enemySpeed = 5;
-    enemyY = 0;
+
+    enemySpeed = 6;
+
+    enemyY = -50;
   }
 
-  menuTekst();
+
+  menuText();
 }
 
 
-// =======================
-// CATCH
-// =======================
+// ========================
+// 🍎 CATCH
+// ========================
 
 function catchGame() {
-  background(90, 50, 100);
+
+  background(80, 40, 100);
 
   fill(255);
-  textSize(18);
-  text("Catch | Score: " + score, width / 2, 20);
+  textSize(22);
+
+  text(
+    "🍎 Catch | Score: " + score,
+    width / 2,
+    30
+  );
+
 
   basketX = mouseX;
 
-  // mand
+
+  // MANDJE
   fill(255, 200, 50);
-  rect(basketX - 40, height - 40, 80, 20, 5);
 
-  // vallend balletje
-  fill(100, 255, 100);
-  ellipse(ballX, ballY, 25);
+  rect(
+    basketX - 50,
+    height - 60,
+    100,
+    25,
+    7
+  );
 
-  ballY += 5;
 
-  // gevangen
+  // BAL
+  fill(100, 255, 120);
+
+  ellipse(
+    ballX,
+    ballY,
+    30
+  );
+
+
+  ballY += 6;
+
+
+  // GEVANGEN
   if (
-    ballY > height - 60 &&
-    ballX > basketX - 50 &&
-    ballX < basketX + 50
+    ballY > height - 80 &&
+    ballX > basketX - 60 &&
+    ballX < basketX + 60
   ) {
+
     score++;
 
-    ballX = random(20, width - 20);
-    ballY = 40;
+    resetBall();
   }
 
-  // gemist
+
+  // GEMIST
   if (ballY > height) {
+
     score = 0;
 
-    ballX = random(20, width - 20);
-    ballY = 40;
+    resetBall();
   }
 
-  menuTekst();
+
+  menuText();
 }
 
 
-// =======================
-// BESTURING
-// =======================
+function resetBall() {
+
+  ballX =
+    random(30, width - 30);
+
+  ballY = 50;
+}
+
+
+// ========================
+// ⌨️ BESTURING
+// ========================
 
 function keyPressed() {
 
   if (game === "snake") {
-    if (keyCode === LEFT_ARROW) {
-      snakeDX = -20;
+
+    // W / PIJL OMHOOG
+    if (
+      key === "w" ||
+      key === "W" ||
+      keyCode === UP_ARROW
+    ) {
+      snakeDX = 0;
+      snakeDY = -gridSize;
+    }
+
+
+    // S / PIJL OMLAAG
+    if (
+      key === "s" ||
+      key === "S" ||
+      keyCode === DOWN_ARROW
+    ) {
+      snakeDX = 0;
+      snakeDY = gridSize;
+    }
+
+
+    // A / PIJL LINKS
+    if (
+      key === "a" ||
+      key === "A" ||
+      keyCode === LEFT_ARROW
+    ) {
+      snakeDX = -gridSize;
       snakeDY = 0;
     }
 
-    if (keyCode === RIGHT_ARROW) {
-      snakeDX = 20;
+
+    // D / PIJL RECHTS
+    if (
+      key === "d" ||
+      key === "D" ||
+      keyCode === RIGHT_ARROW
+    ) {
+      snakeDX = gridSize;
       snakeDY = 0;
-    }
-
-    if (keyCode === UP_ARROW) {
-      snakeDX = 0;
-      snakeDY = -20;
-    }
-
-    if (keyCode === DOWN_ARROW) {
-      snakeDX = 0;
-      snakeDY = 20;
     }
   }
 
-  // M = terug naar menu
+
+  // M = MENU
   if (key === "m" || key === "M") {
+
     game = "menu";
+
     score = 0;
   }
+
+
+  // Voorkomt scrollen met pijltjes
+  return false;
 }
 
 
-// =======================
-// MUIS MENU
-// =======================
+// ========================
+// 🖱️ MENU KLIKKEN
+// ========================
 
 function mousePressed() {
-  if (game !== "menu") return;
 
-  // Snake
+  if (game !== "menu") {
+    return;
+  }
+
+
+  let buttonWidth =
+    min(400, width * 0.7);
+
+  let x =
+    width / 2 -
+    buttonWidth / 2;
+
+
+  // SNAKE
   if (
-    mouseX > 100 &&
-    mouseX < 400 &&
-    mouseY > 130 &&
-    mouseY < 190
+    mouseX > x &&
+    mouseX < x + buttonWidth &&
+    mouseY > height * 0.35 &&
+    mouseY < height * 0.35 + 70
   ) {
+
     resetGame();
+
     game = "snake";
   }
 
-  // Dodge
+
+  // DODGE
   if (
-    mouseX > 100 &&
-    mouseX < 400 &&
-    mouseY > 210 &&
-    mouseY < 270
+    mouseX > x &&
+    mouseX < x + buttonWidth &&
+    mouseY > height * 0.50 &&
+    mouseY < height * 0.50 + 70
   ) {
+
     resetGame();
+
     game = "dodge";
   }
 
-  // Catch
+
+  // CATCH
   if (
-    mouseX > 100 &&
-    mouseX < 400 &&
-    mouseY > 290 &&
-    mouseY < 350
+    mouseX > x &&
+    mouseX < x + buttonWidth &&
+    mouseY > height * 0.65 &&
+    mouseY < height * 0.65 + 70
   ) {
+
     resetGame();
+
     game = "catch";
   }
 }
 
 
-// =======================
-// EXTRA
-// =======================
-
-function menuTekst() {
-  fill(255);
-  textSize(14);
-  text("Druk op M om terug te gaan", width / 2, height - 15);
-}
+// ========================
+// RESET
+// ========================
 
 function resetGame() {
+
   score = 0;
 
-  snakeX = 200;
-  snakeY = 200;
+  snakeX =
+    floor(width / 2 / gridSize) *
+    gridSize;
 
-  enemyY = 0;
-  enemySpeed = 5;
+  snakeY =
+    floor(height / 2 / gridSize) *
+    gridSize;
 
-  ballY = 40;
+  snakeDX = gridSize;
+  snakeDY = 0;
+
+  makeFood();
+
+
+  enemyY = -50;
+  enemySpeed = 6;
+
+  enemyX =
+    random(50, width - 50);
+
+
+  resetBall();
+}
+
+
+// ========================
+// MENU TEKST
+// ========================
+
+function menuText() {
+
+  fill(255);
+
+  textSize(15);
+
+  text(
+    "Druk op M om terug te gaan",
+    width / 2,
+    height - 20
+  );
+}
+
+
+// ========================
+// SCHERM VERANDERT
+// ========================
+
+function windowResized() {
+
+  resizeCanvas(
+    windowWidth,
+    windowHeight
+  );
 }
