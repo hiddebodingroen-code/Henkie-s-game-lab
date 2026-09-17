@@ -1,11 +1,7 @@
 let dokter;
 
 function preload() {
-  dokter = loadImage(
-    "./dokter.png",
-    () => console.log("DOKTER GELADEN!"),
-    (fout) => console.error("DOKTER KON NIET LADEN:", fout)
-  );
+  dokter = loadImage("./dokter.png");
 }
 
 function setup() {
@@ -15,7 +11,5 @@ function setup() {
 function draw() {
   background(220);
 
-  if (dokter) {
-    image(dokter, 50, 50, 300, 300);
-  }
+  image(dokter, 0, 0, 400, 400);
 }
