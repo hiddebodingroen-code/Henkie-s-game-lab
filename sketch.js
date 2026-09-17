@@ -5,11 +5,11 @@ function preload() {
 }
 
 function setup() {
-  createCanvas(400, 400);
+  createCanvas(500, 500);
 }
 
 function draw() {
   background(220);
 
-  image(dokter, 100, 100, 200, 200);
+  image(dokter, 100, 100, 150, 150);
 }
